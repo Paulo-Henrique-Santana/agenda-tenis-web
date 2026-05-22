@@ -54,3 +54,18 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Design services around a single responsibility
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
+
+## PrimeNG
+
+- Use PrimeNG as the primary UI component library
+- Configure PrimeNG in `app.config.ts` via `providePrimeNG()` with a theme (e.g., Aura, Lara, Nora)
+- Import PrimeNG components individually (standalone) — never use `PrimeNGModule`
+- Use PrimeNG CSS variables and the theme system for customization; avoid hardcoding colors
+- Prefer PrimeNG built-in directives (e.g., `pButton`, `pInputText`) over custom equivalents
+- Use `pRipple` for ripple effects only when the PrimeNG theme supports it
+- Always set `fluid` or width utilities instead of inline styles for layout sizing
+- Use `<p-toast>` + `MessageService` for user notifications; provide `MessageService` at component or root level as needed
+- Use `<p-confirmDialog>` + `ConfirmationService` for destructive action confirmations
+- Prefer PrimeNG form components (`p-select`, `p-datepicker`, `p-inputnumber`, etc.) with Reactive Forms
+- Use `[(ngModel)]` only when absolutely necessary; prefer `formControl` / `formControlName`
+- Always provide `ariaLabel` or `ariaLabelledBy` on PrimeNG interactive components for accessibility
