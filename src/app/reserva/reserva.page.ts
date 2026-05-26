@@ -7,6 +7,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { InputMask } from 'primeng/inputmask';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
+import { FieldErrorComponent } from '../shared/components/field-error/field-error.component';
 
 const WEEKDAYS = [
   'domingo',
@@ -28,7 +29,7 @@ function validateCpf(control: AbstractControl): { [key: string]: boolean } | nul
 @Component({
   selector: 'app-reserva',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, InputText, InputMask, Select, DatePicker, ButtonDirective, Card],
+  imports: [ReactiveFormsModule, InputText, InputMask, Select, DatePicker, ButtonDirective, Card, FieldErrorComponent],
   templateUrl: './reserva.page.html',
   styleUrl: './reserva.page.scss',
 })
@@ -36,6 +37,11 @@ export class ReservaPage {
   private readonly fb = inject(FormBuilder);
 
   readonly minDate = new Date();
+
+  readonly nameErrors = { required: 'Nome completo é obrigatório', minlength: 'Informe pelo menos 3 caracteres' };
+  readonly cpfErrors = { required: 'Informe o CPF completo', cpfIncomplete: 'Informe o CPF completo' };
+  readonly dateErrors = { required: 'Selecione a data da reserva' };
+  readonly timeSlotErrors = { required: 'Selecione o horário' };
 
   readonly timeSlots: SelectOption[] = Array.from({ length: 17 }, (_, i) => {
     const hour = i + 6;

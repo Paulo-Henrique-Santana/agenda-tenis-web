@@ -33,15 +33,11 @@
             aria-describedby="nome-error"
             fluid
           />
-          @if (form.controls.name.invalid && form.controls.name.touched) {
-            <span id="nome-error" class="error-msg" role="alert">
-              @if (form.controls.name.errors?.['required']) {
-                Nome completo é obrigatório
-              } @else if (form.controls.name.errors?.['minlength']) {
-                Informe pelo menos 3 caracteres
-              }
-            </span>
-          }
+          <app-field-error
+            errorId="nome-error"
+            [control]="form.controls.name"
+            [errors]="nameErrors"
+          />
         </div>
 
         <!-- CPF -->
@@ -58,11 +54,11 @@
             [invalid]="form.controls.cpf.invalid && form.controls.cpf.touched"
             fluid
           />
-          @if (form.controls.cpf.invalid && form.controls.cpf.touched) {
-            <span id="cpf-error" class="error-msg" role="alert">
-              Informe o CPF completo
-            </span>
-          }
+          <app-field-error
+            errorId="cpf-error"
+            [control]="form.controls.cpf"
+            [errors]="cpfErrors"
+          />
         </div>
 
         <!-- Datas e Horários -->
@@ -100,9 +96,10 @@
                     [invalid]="slot.get('date')!.invalid && slot.get('date')!.touched"
                     fluid
                   />
-                  @if (slot.get('date')!.invalid && slot.get('date')!.touched) {
-                    <span class="error-msg" role="alert">Selecione a data da reserva</span>
-                  }
+                  <app-field-error
+                    [control]="slot.get('date')!"
+                    [errors]="dateErrors"
+                  />
                 </div>
 
                 <div class="form-field">
@@ -119,9 +116,10 @@
                     [invalid]="slot.get('timeSlot')!.invalid && slot.get('timeSlot')!.touched"
                     fluid
                   />
-                  @if (slot.get('timeSlot')!.invalid && slot.get('timeSlot')!.touched) {
-                    <span class="error-msg" role="alert">Selecione o horário</span>
-                  }
+                  <app-field-error
+                    [control]="slot.get('timeSlot')!"
+                    [errors]="timeSlotErrors"
+                  />
                 </div>
               </div>
             </div>
