@@ -1,0 +1,178 @@
+<div class="page-container">
+  <header class="page-header">
+    <h1>
+      <i class="pi pi-calendar" aria-hidden="true"></i>
+      Agendamento de Quadra de Tênis
+    </h1>
+    <p>Preencha os dados abaixo para gerar o email de reserva</p>
+  </header>
+
+  <p-card>
+    <form
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      aria-label="Formulário de reserva de quadra"
+      novalidate
+    >
+      <div class="form-grid">
+        <!-- Nome -->
+        <div class="form-field">
+          <label for="nome">
+            Nome Completo <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="nome"
+            type="text"
+            pInputText
+            formControlName="name"
+            placeholder="Ex: Paulo Henrique Santana da Silva"
+            autocomplete="name"
+            [attr.aria-invalid]="
+              form.controls.name.invalid && form.controls.name.touched ? 'true' : null
+            "
+            aria-describedby="nome-error"
+            fluid
+          />
+          @if (form.controls.name.invalid && form.controls.name.touched) {
+            <span id="nome-error" class="error-msg" role="alert">
+              @if (form.controls.name.errors?.['required']) {
+                Nome completo é obrigatório
+              } @else if (form.controls.name.errors?.['minlength']) {
+                Informe pelo menos 3 caracteres
+              }
+            </span>
+          }
+        </div>
+
+        <!-- CPF -->
+        <div class="form-field">
+          <label for="cpf-input">
+            CPF <span aria-hidden="true">*</span>
+          </label>
+          <p-inputmask
+            inputId="cpf-input"
+            mask="999.999.999-99"
+            formControlName="cpf"
+            placeholder="000.000.000-00"
+            aria-describedby="cpf-error"
+            [invalid]="form.controls.cpf.invalid && form.controls.cpf.touched"
+            fluid
+          />
+          @if (form.controls.cpf.invalid && form.controls.cpf.touched) {
+            <span id="cpf-error" class="error-msg" role="alert">
+              Informe o CPF completo
+            </span>
+          }
+        </div>
+
+        <!-- Datas e Horários -->
+        <div formArrayName="slots" class="slots-container">
+          @for (slot of slotControls(); track slot; let i = $index) {
+            <div [formGroupName]="i" class="slot-entry">
+              @if (slotControls().length > 1) {
+                <div class="slot-header">
+                  <span class="slot-label">Data {{ i + 1 }}</span>
+                  <button
+                    pButton
+                    type="button"
+                    icon="pi pi-trash"
+                    severity="danger"
+                    [text]="true"
+                    size="small"
+                    (click)="removeSlot(i)"
+                    [attr.aria-label]="'Remover data ' + (i + 1)"
+                  ></button>
+                </div>
+              }
+              <div class="form-row">
+                <div class="form-field">
+                  <label [for]="'data-input-' + i">
+                    Data da Reserva <span aria-hidden="true">*</span>
+                  </label>
+                  <p-datepicker
+                    [inputId]="'data-input-' + i"
+                    formControlName="date"
+                    [minDate]="minDate"
+                    dateFormat="dd/mm/yy"
+                    placeholder="dd/mm/aaaa"
+                    [ariaLabel]="'Data da reserva ' + (i + 1)"
+                    showIcon
+                    [invalid]="slot.get('date')!.invalid && slot.get('date')!.touched"
+                    fluid
+                  />
+                  @if (slot.get('date')!.invalid && slot.get('date')!.touched) {
+                    <span class="error-msg" role="alert">Selecione a data da reserva</span>
+                  }
+                </div>
+
+                <div class="form-field">
+                  <label [for]="'horario-input-' + i">
+                    Horário <span aria-hidden="true">*</span>
+                  </label>
+                  <p-select
+                    [inputId]="'horario-input-' + i"
+                    [options]="timeSlots"
+                    optionLabel="label"
+                    formControlName="timeSlot"
+                    placeholder="Selecione o horário..."
+                    [ariaLabel]="'Horário da reserva ' + (i + 1)"
+                    [invalid]="slot.get('timeSlot')!.invalid && slot.get('timeSlot')!.touched"
+                    fluid
+                  />
+                  @if (slot.get('timeSlot')!.invalid && slot.get('timeSlot')!.touched) {
+                    <span class="error-msg" role="alert">Selecione o horário</span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+          <button
+            pButton
+            type="button"
+            label="Adicionar data"
+            icon="pi pi-plus"
+            severity="secondary"
+            [text]="true"
+            (click)="addSlot()"
+            class="add-slot-btn"
+          ></button>
+        </div>
+      </div>
+    </form>
+  </p-card>
+
+  <!-- Prévia do email (exibida somente quando o formulário está válido e completo) -->
+  @if (emailBody()) {
+    <p-card class="preview-card">
+      <p class="preview-title">
+        <i class="pi pi-envelope" aria-hidden="true"></i>
+        Prévia do Email
+      </p>
+
+      <div class="email-meta">
+        <span>Para:</span>
+        <strong>cesantoamaro&#64;prefeitura.sp.gov.br</strong>
+      </div>
+      <div class="email-meta">
+        <span>Assunto:</span>
+        <strong>Reserva de Quadra de Tênis</strong>
+      </div>
+
+      <div class="email-body" role="region" aria-label="Conteúdo do email gerado">
+        {{ emailBody() }}
+      </div>
+
+      <div class="action-row">
+        <button
+          pButton
+          type="button"
+          label="Enviar Reserva"
+          icon="pi pi-send"
+          (click)="onSend()"
+          aria-label="Enviar solicitação de reserva"
+        ></button>
+      </div>
+    </p-card>
+  }
+</div>
