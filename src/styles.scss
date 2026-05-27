@@ -1,5 +1,16 @@
 @import "primeicons/primeicons.css";
 
+// ─── Tennis Dark Palette ───────────────────────────────────────────────────────
+// Primary (court green)  → controlled by PrimeNG TennisTheme (--p-primary-*)
+// Surfaces (dark zinc)    → controlled by PrimeNG TennisTheme (--p-surface-*)
+// Accent  (tennis ball)  → custom CSS vars below
+:root {
+  --tennis-accent: #a3e635;       /* lime-400  — tennis ball lime    */
+  --tennis-accent-dim: #65a30d;   /* lime-600  — muted accent        */
+  --tennis-accent-contrast: #1a2e05; /* dark text on lime background */
+}
+// ──────────────────────────────────────────────────────────────────────────────
+
 *,
 *::before,
 *::after {
@@ -12,5 +23,6 @@ body {
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--surface-ground);
+  background: var(--p-surface-ground);
+  color-scheme: dark;
 }
