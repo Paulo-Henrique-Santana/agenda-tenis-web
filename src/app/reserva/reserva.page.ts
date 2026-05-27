@@ -40,6 +40,7 @@ export class ReservaPage {
 
   readonly nameErrors = { required: 'Nome completo é obrigatório', minlength: 'Informe pelo menos 3 caracteres' };
   readonly cpfErrors = { required: 'Informe o CPF completo', cpfIncomplete: 'Informe o CPF completo' };
+  readonly emailErrors = { required: 'E-mail é obrigatório', email: 'Informe um e-mail válido' };
   readonly dateErrors = { required: 'Selecione a data da reserva' };
   readonly timeSlotErrors = { required: 'Selecione o horário' };
 
@@ -58,6 +59,7 @@ export class ReservaPage {
   readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
     cpf: ['', [Validators.required, validateCpf]],
+    email: ['', [Validators.required, Validators.email]],
     slots: this.fb.array([this.createSlot()]),
   });
 

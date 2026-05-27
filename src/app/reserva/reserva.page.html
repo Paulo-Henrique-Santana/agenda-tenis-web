@@ -61,6 +61,31 @@
           />
         </div>
 
+        <!-- E-mail -->
+        <div class="form-field">
+          <label for="email">
+            E-mail <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="email"
+            type="email"
+            pInputText
+            formControlName="email"
+            placeholder="Ex: maria@email.com"
+            autocomplete="email"
+            [attr.aria-invalid]="
+              form.controls.email.invalid && form.controls.email.touched ? 'true' : null
+            "
+            aria-describedby="email-error"
+            fluid
+          />
+          <app-field-error
+            errorId="email-error"
+            [control]="form.controls.email"
+            [errors]="emailErrors"
+          />
+        </div>
+
         <!-- Datas e Horários -->
         <div formArrayName="slots" class="slots-container">
           @for (slot of slotControls(); track slot; let i = $index) {
