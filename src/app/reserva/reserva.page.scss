@@ -87,7 +87,7 @@
 }
 
 .email-body {
-  background: var(--p-surface-100);
+  background: var(--p-surface-800);
   border: 1px solid var(--p-surface-700);
   border-left: 3px solid var(--tennis-accent);
   border-radius: 8px;
@@ -95,7 +95,7 @@
   white-space: pre-wrap;
   line-height: 1.75;
   font-size: 0.9375rem;
-  color: var(--p-text-color);
+  color: var(--p-surface-100);
   margin: 1rem 0 1.5rem;
 }
 
