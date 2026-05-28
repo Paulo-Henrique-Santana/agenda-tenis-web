@@ -1,13 +1,16 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { DatePicker } from 'primeng/datepicker';
 import { InputMask } from 'primeng/inputmask';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
+import { Toast } from 'primeng/toast';
 import { FieldErrorComponent } from '../shared/components/field-error/field-error.component';
+import { ReservaApiService } from './services/reserva-api.service';
 
 const WEEKDAYS = [
   'domingo',
@@ -29,18 +32,22 @@ function validateCpf(control: AbstractControl): { [key: string]: boolean } | nul
 @Component({
   selector: 'app-reserva',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, InputText, InputMask, Select, DatePicker, ButtonDirective, Card, FieldErrorComponent],
+  imports: [ReactiveFormsModule, InputText, InputMask, Select, DatePicker, ButtonDirective, Card, FieldErrorComponent, Toast],
+  providers: [MessageService],
   templateUrl: './reserva.page.html',
   styleUrl: './reserva.page.scss',
 })
 export class ReservaPage {
   private readonly fb = inject(FormBuilder);
+  private readonly reservaApi = inject(ReservaApiService);
+  private readonly messageService = inject(MessageService);
+
+  readonly sending = signal(false);
 
   readonly minDate = new Date();
 
   readonly nameErrors = { required: 'Nome completo é obrigatório', minlength: 'Informe pelo menos 3 caracteres' };
   readonly cpfErrors = { required: 'Informe o CPF completo', cpfIncomplete: 'Informe o CPF completo' };
-  readonly emailErrors = { required: 'E-mail é obrigatório', email: 'Informe um e-mail válido' };
   readonly dateErrors = { required: 'Selecione a data da reserva' };
   readonly timeSlotErrors = { required: 'Selecione o horário' };
 
@@ -59,7 +66,6 @@ export class ReservaPage {
   readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
     cpf: ['', [Validators.required, validateCpf]],
-    email: ['', [Validators.required, Validators.email]],
     slots: this.fb.array([this.createSlot()]),
   });
 
@@ -129,6 +135,43 @@ export class ReservaPage {
   }
 
   onSend(): void {
-    // TODO: integrate with API
+    if (this.form.invalid || this.sending()) return;
+
+    const v = this.form.value;
+    const slots = (v.slots ?? []) as Array<{ date: Date; timeSlot: { value: string } }>;
+
+    this.sending.set(true);
+
+    this.reservaApi.enviar({
+      name: v.name!,
+      cpf: v.cpf!,
+      slots: slots.map(s => ({
+        date: s.date.toISOString(),
+        timeSlot: s.timeSlot.value,
+      })),
+    }).subscribe({
+      next: () => {
+        this.sending.set(false);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Reserva enviada!',
+          detail: 'Seu e-mail de solicitação foi enviado com sucesso.',
+          life: 5000,
+        });
+        this.form.reset();
+        this.slots.clear();
+        this.slots.push(this.createSlot());
+        this.slotControls.set([...this.slots.controls] as FormGroup[]);
+      },
+      error: () => {
+        this.sending.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao enviar',
+          detail: 'Não foi possível enviar a reserva. Tente novamente.',
+          life: 6000,
+        });
+      },
+    });
   }
 }
