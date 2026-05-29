@@ -1,0 +1,57 @@
+<div class="page-container">
+  <header class="page-header">
+    <h1>
+      <i class="pi pi-inbox" aria-hidden="true"></i>
+      E-mails Enviados
+    </h1>
+    <p>Histórico de solicitações de reserva enviadas por e-mail</p>
+  </header>
+
+  <p-card>
+    <p-table
+      [value]="emailLogs()"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      stripedRows
+      emptyMessage="Nenhum e-mail encontrado."
+      aria-label="Lista de e-mails enviados"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="id" scope="col" style="width: 4rem">
+            # <p-sortIcon field="id" />
+          </th>
+          <th pSortableColumn="name" scope="col">
+            Nome <p-sortIcon field="name" />
+          </th>
+          <th scope="col">CPF</th>
+          <th scope="col">Horários Reservados</th>
+          <th pSortableColumn="sentAt" scope="col" style="width: 12rem">
+            Enviado em <p-sortIcon field="sentAt" />
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-log>
+        <tr>
+          <td>{{ log.id }}</td>
+          <td>{{ log.name }}</td>
+          <td>{{ log.cpf }}</td>
+          <td>
+            <div class="slots-list">
+              @for (slot of log.slots; track $index) {
+                <p-tag
+                  [value]="(slot.date | date: 'dd/MM/yyyy') + ' às ' + slot.timeSlot"
+                  severity="secondary"
+                />
+              }
+            </div>
+          </td>
+          <td>{{ log.sentAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>
